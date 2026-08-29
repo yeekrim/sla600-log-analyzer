@@ -65,11 +65,13 @@ python sla_movement_graph.py your_log_file.log --save out.png
 
 `parse_log()` · `extract_series()` · `plot_axis()` · `plot_dashboard()` 함수를 다른 코드에서 직접 import 해 재사용할 수도 있습니다.
 
+그래프 한글 라벨은 레포에 함께 배포한 `fonts/NanumGothic-Regular.ttf`(OFL 라이선스)를 자동 등록해 렌더링하므로, 시스템에 한글 폰트가 없어도 어디서든 동일하게 표시됩니다.
+
 ## 기술 스택
 
 - Python 3
 - pandas / re (로그 파싱)
-- matplotlib (시각화)
+- matplotlib (시각화, NanumGothic 폰트 번들)
 ## 개선 사항 (적용 완료)
 
 아래는 초기 버전의 제한 사항으로, 현재 노트북에 모두 반영되었습니다.
