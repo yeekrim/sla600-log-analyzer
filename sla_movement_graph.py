@@ -93,14 +93,31 @@ AXES = [
 
 
 
-def setup_korean_font():
-    """설치된 한글 폰트가 있으면 matplotlib 기본 폰트로 설정한다.
+# 레포에 함께 배포하는 한글 폰트 (fonts/NanumGothic-Regular.ttf, OFL 라이선스).
+# 실행 환경에 한글 폰트가 없어도 그래프 라벨이 동일하게 렌더링되도록 번들한다.
+BUNDLED_FONT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "fonts", "NanumGothic-Regular.ttf")
 
-    폰트가 없으면 조용히 넘어가고, 그래프의 한글 라벨만 깨져 보일 수 있다
-    (그래프 자체는 정상 생성됨).
+
+def setup_korean_font():
+    """한글 라벨이 깨지지 않도록 matplotlib 폰트를 설정한다.
+
+    레포에 번들된 NanumGothic 을 우선 등록하고, 파일이 없으면 시스템에
+    설치된 한글 폰트를 탐색해 사용한다. 둘 다 없으면 조용히 넘어간다
+    (그래프 자체는 정상 생성되며 한글 라벨만 깨져 보일 수 있음).
     """
     from matplotlib import font_manager
 
+    plt.rcParams["axes.unicode_minus"] = False  # 음수 부호 깨짐 방지
+
+    # 1) 레포 번들 폰트 우선
+    if os.path.exists(BUNDLED_FONT):
+        font_manager.fontManager.addfont(BUNDLED_FONT)
+        plt.rcParams["font.family"] = font_manager.FontProperties(
+            fname=BUNDLED_FONT).get_name()
+        return
+
+    # 2) 시스템 설치 폰트로 폴백
     candidates = ["AppleGothic", "Malgun Gothic", "NanumGothic",
                   "Noto Sans CJK KR", "Noto Sans KR"]
     available = {f.name for f in font_manager.fontManager.ttflist}
@@ -108,7 +125,6 @@ def setup_korean_font():
         if name in available:
             plt.rcParams["font.family"] = name
             break
-    plt.rcParams["axes.unicode_minus"] = False  # 음수 부호 깨짐 방지
 
 
 def parse_log(path, encoding="utf-8"):
